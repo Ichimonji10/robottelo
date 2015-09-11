@@ -318,3 +318,15 @@ class SearchTestCase(APITestCase):
         act_keys = entities.ActivationKey(organization=self.org).search()
         self.assertEqual(len(act_keys), 1)
         self.assertEqual(act_keys[0].id, self.act_key.id)
+
+    def test_search_per_page(self):
+        """@Test: Search for all activation keys.
+
+        @Assert: The `per_page` value has a sane default.
+
+        @Feature: ActivationKey
+
+        """
+        response = entities.ActivationKey(organization=self.org).search_raw()
+        response.raise_for_status()
+        self.assertLessEqual(response.json()['per_page'], 50)

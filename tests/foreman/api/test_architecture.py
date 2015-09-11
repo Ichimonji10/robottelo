@@ -59,3 +59,15 @@ class ArchitectureTestCase(APITestCase):
             [os_id],
             [os['id'] for os in arch_attrs['operatingsystems']],
         )
+
+    def test_search_per_page(self):
+        """@Test: Search for all architectures.
+
+        @Assert: The `per_page` value has a sane default.
+
+        @Feature: Architecture
+
+        """
+        response = entities.Architecture().search_raw()
+        response.raise_for_status()
+        self.assertLessEqual(response.json()['per_page'], 50)

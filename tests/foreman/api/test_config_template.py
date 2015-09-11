@@ -63,3 +63,15 @@ class ConfigTemplateTestCase(APITestCase):
         conf_templ.organization = []
         conf_templ = conf_templ.update(['organization'])
         self.assertEqual(len(conf_templ.organization), 0)
+
+    def test_search_per_page(self):
+        """@Test: Search for all config templates.
+
+        @Assert: The `per_page` value has a sane default.
+
+        @Feature: ConfigTemplate
+
+        """
+        response = entities.ConfigTemplate().search_raw()
+        response.raise_for_status()
+        self.assertLessEqual(response.json()['per_page'], 50)
