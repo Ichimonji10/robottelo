@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 """Implements various decorators"""
-
 import bugzilla
 import logging
 import random
@@ -12,7 +11,12 @@ from functools import wraps
 from robottelo.config import conf
 from robottelo.constants import BZ_OPEN_STATUSES, NOT_IMPLEMENTED
 from xml.parsers.expat import ExpatError, errors
-from xmlrpclib import Fault
+
+from sys import version_info
+if version_info.major == 2:
+    from xmlrpclib import Fault  # pylint:disable=import-error
+else:
+    from xmlrpc.client import Fault  # pylint:disable=import-error
 
 BUGZILLA_URL = "https://bugzilla.redhat.com/xmlrpc.cgi"
 LOGGER = logging.getLogger(__name__)
@@ -278,7 +282,7 @@ def bz_bug_is_open(bug_id):
     try:
         bug = _get_bugzilla_bug(bug_id)
     except BugFetchError as err:
-        LOGGER.warning(err.message)
+        LOGGER.warning(type(u'')(err))
         return False
     if bug is None or bug.status not in BZ_OPEN_STATUSES:
         # if not upstream mode, verify whiteboard field for the presence of
@@ -305,7 +309,7 @@ def rm_bug_is_open(bug_id):
     try:
         status_id = _get_redmine_bug_status_id(bug_id)
     except BugFetchError as err:
-        LOGGER.warning(err.message)
+        LOGGER.warning(type(u'')(err))
     if status_id is None or status_id in _redmine_closed_issue_statuses():
         return False
     return True

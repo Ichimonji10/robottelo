@@ -2,8 +2,6 @@
 import csv
 import re
 
-from itertools import izip
-
 
 def _csv_reader(output):
     """An unicode CSV reader which processes unicode strings and return unicode
@@ -34,7 +32,7 @@ def parse_csv(output):
     # Generate the key names, spaces will be converted to dashes "-"
     keys = [header.replace(' ', '-').lower() for header in next(reader)]
     # For each entry, create a dict mapping each key with each value
-    return [dict(izip(keys, values)) for values in reader if len(values) > 0]
+    return [dict(zip(keys, values)) for values in reader if len(values) > 0]
 
 
 def parse_help(output):

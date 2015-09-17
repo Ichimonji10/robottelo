@@ -1,12 +1,16 @@
 """Unit tests for the ``activation_keys`` paths."""
-import httplib
-
 from fauxfactory import gen_integer, gen_string
 from nailgun import client, entities
 from requests.exceptions import HTTPError
 from robottelo.decorators import rm_bug_is_open, skip_if_bug_open
 from robottelo.helpers import get_server_credentials, valid_data_list
 from robottelo.test import APITestCase
+
+from sys import version_info
+if version_info.major == 2:
+    import httplib as http_client  # pylint:disable=import-error
+else:
+    import http.client as http_client  # pylint:disable=import-error
 
 
 def _good_max_content_hosts():
@@ -204,7 +208,7 @@ class ActivationKeysTestCase(APITestCase):
             auth=get_server_credentials(),
             verify=False,
         )
-        status_code = httplib.OK
+        status_code = http_client.OK
         self.assertEqual(status_code, response.status_code)
         self.assertIn('application/json', response.headers['content-type'])
 

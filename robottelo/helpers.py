@@ -1,23 +1,25 @@
 # -*- encoding: utf-8 -*-
 """Several helper methods and functions."""
 import logging
-from random import randint
-from urlparse import urljoin, urlunsplit
-
 import os
 import re
-from os.path import join
 
 from fauxfactory import gen_string, gen_integer
-
 from nailgun import entities, entity_mixins
-
 from nailgun.config import ServerConfig
-
+from os.path import join
+from random import randint
 from robottelo import ssh
 from robottelo.config import conf
 from robottelo.constants import VALID_GPG_KEY_FILE
 from robottelo.decorators import bz_bug_is_open
+
+from sys import version_info
+if version_info.major == 2:
+    from urlparse import urljoin, urlunsplit  # pylint:disable=import-error
+else:
+    from urllib.parse import urljoin, urlunsplit  # pylint:disable=import-error
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -402,15 +404,14 @@ def prepare_import_data(tar_path=None):
     files = {}
     for file in ssh.command(cmd).stdout:
         for key in (
-            'activation-keys',
-            'channels',
-            'config-files-latest',
-            'kickstart-scripts',
-            'repositories',
-            'system-groups',
-            'system-profiles',
-            'users'
-        ):
+                'activation-keys',
+                'channels',
+                'config-files-latest',
+                'kickstart-scripts',
+                'repositories',
+                'system-groups',
+                'system-profiles',
+                'users'):
             if file.endswith(key + '.csv'):
                 files[key] = join(tmpdir, file)
                 break

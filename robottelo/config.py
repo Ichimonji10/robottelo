@@ -1,13 +1,15 @@
 """Define and instantiate the configuration class for Robottelo."""
-
-import ConfigParser
 import logging
-from ConfigParser import NoSectionError
-from logging import config
-
 import os
 
+from logging import config
 from robottelo.constants import ROBOTTELO_PROPERTIES
+
+from sys import version_info
+if version_info.major == 2:
+    from ConfigParser import RawConfigParser, NoSectionError  # pylint:disable=import-error
+else:
+    from configparser import RawConfigParser, NoSectionError  # pylint:disable=import-error
 
 
 class Configs(object):
@@ -19,7 +21,7 @@ class Configs(object):
         self.logger = logging.getLogger('robottelo')
 
         # Read the config file, if available.
-        conf_parser = ConfigParser.RawConfigParser()
+        conf_parser = RawConfigParser()
         if conf_parser.read(_config_file()):
             for section in conf_parser.sections():
                 for option in conf_parser.options(section):
